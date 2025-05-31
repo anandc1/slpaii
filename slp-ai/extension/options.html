@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SLP AI Assistant Settings</title>
+  <style>
+    body {
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .api-key-input {
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+    .save-btn {
+      background: #7c3aed;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .save-btn:hover {
+      background: #6d28d9;
+    }
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+    }
+    .status.success {
+      background: #ecfdf5;
+      color: #059669;
+    }
+    .status.error {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SLP AI Assistant Settings</h1>
+    <div class="form-group">
+      <label for="apiKey">OpenAI API Key</label>
+      <input 
+        type="password" 
+        id="apiKey" 
+        class="api-key-input"
+        placeholder="sk-..." 
+        autocomplete="off"
+      >
+    </div>
+    <button id="save" class="save-btn">Save Settings</button>
+    <div id="status-message"></div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html> 

@@ -1,0 +1,33 @@
+// Firestore Rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read/write access to all users for all documents
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+// Storage Rules
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+/*
+IMPORTANT: These rules allow anyone to read and write to your database!
+They are useful for development, but should be changed before production.
+
+To update these rules in Firebase:
+1. Go to the Firebase Console: https://console.firebase.google.com/
+2. Select your project
+3. Go to Firestore Database > Rules
+4. Replace the rules with the ones above
+5. Click "Publish"
+
+Do the same for Storage rules.
+*/

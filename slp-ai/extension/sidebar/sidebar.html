@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="sidebar.css" />
+    <title>SLP Assistant</title>
+    <!-- Add Firebase scripts (local) -->
+    <script src="../lib/firebase/firebase-app-compat.js"></script>
+    <script src="../lib/firebase/firebase-firestore-compat.js"></script>
+    <script src="../lib/firebase/firebase-storage-compat.js"></script>
+    <script src="../lib/firebase/firebase-auth-compat.js"></script>
+    <!-- Add QR Code library (local) -->
+    <script src="../lib/qrcode.min.js"></script>
+  </head>
+  <body>
+    <div class="assistant-container">
+      <div class="header">
+        <h2>SLP Assistant</h2>
+        <div class="status-indicator" id="statusIndicator">
+          <span class="status-dot"></span>
+          <span class="status-text">Ready</span>
+        </div>
+      </div>
+
+      <!-- Workflow Navigation -->
+      <div class="workflow-nav">
+        <div class="step-indicator" data-step="1">1. Start</div>
+        <div class="step-indicator" data-step="2">2. SOAP Note</div>
+        <div class="step-indicator" data-step="3">3. Assessment</div>
+        <div class="step-indicator" data-step="4">4. Report</div>
+      </div>
+
+      <!-- Workflow Screens Container -->
+      <div class="workflow-container">
+        <!-- Step 1: Initial Screen -->
+        <div class="workflow-step" id="step-1">
+          <div class="step-content">
+            <h3>Create Patient Report</h3>
+            <p>
+              Welcome to the SLP Assistant. This tool will help you create
+              comprehensive patient reports.
+            </p>
+            <button id="createReportBtn" class="primary-button">
+              Create New Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: SOAP Note Extraction -->
+        <div class="workflow-step" id="step-2">
+          <div class="step-content">
+            <h3>Patient & SOAP Note Information</h3>
+
+            <!-- Patient Information Form -->
+            <div class="section-container" id="patientInfoSection">
+              <h4>Patient Information</h4>
+              <div class="form-group">
+                <label for="patientFirstName">First Name</label>
+                <input
+                  type="text"
+                  id="patientFirstName"
+                  placeholder="Enter patient's first name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="patientLastName">Last Name</label>
+                <input
+                  type="text"
+                  id="patientLastName"
+                  placeholder="Enter patient's last name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="patientBirthDate">Date of Birth</label>
+                <input type="date" id="patientBirthDate" />
+              </div>
+            </div>
+
+            <!-- SOAP Note Extraction -->
+            <div class="section-container" id="soapExtractionSection">
+              <h4>SOAP Note</h4>
+              <p class="instruction">
+                Navigate to the page containing the patient's SOAP note, then
+                click the button below:
+              </p>
+              <button id="extractSoapBtn" class="action-button">
+                Extract SOAP Note
+              </button>
+
+              <!-- SOAP Content Preview -->
+              <div class="soap-preview" id="soapPreview">
+                <div class="soap-section">
+                  <h5>Subjective</h5>
+                  <textarea
+                    id="subjectiveContent"
+                    placeholder="No subjective information extracted"
+                  ></textarea>
+                </div>
+                <div class="soap-section">
+                  <h5>Objective</h5>
+                  <textarea
+                    id="objectiveContent"
+                    placeholder="No objective information extracted"
+                  ></textarea>
+                </div>
+                <div class="soap-section">
+                  <h5>Assessment</h5>
+                  <textarea
+                    id="assessmentContent"
+                    placeholder="No assessment information extracted"
+                  ></textarea>
+                </div>
+                <div class="soap-section">
+                  <h5>Plan</h5>
+                  <textarea
+                    id="planContent"
+                    placeholder="No plan information extracted"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="workflow-buttons">
+              <button id="soapBackBtn" class="secondary-button">Back</button>
+              <button id="soapNextBtn" class="primary-button">
+                Save & Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Assessment Upload -->
+        <div class="workflow-step" id="step-3">
+          <div class="step-content">
+            <h3>Assessment Upload</h3>
+
+            <div class="section-container" id="assessmentTypeSection">
+              <h4>Assessment Type</h4>
+              <div class="form-group">
+                <label for="assessmentType">Select assessment type</label>
+                <select id="assessmentType">
+                  <option value="PLS-5">PLS-5</option>
+                  <option value="REEL-4">REEL-4</option>
+                  <option value="CLEF-4">CLEF-4</option>
+                  <option value="GFTA">GFTA</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-container" id="uploadSection">
+              <h4>Upload Assessment</h4>
+              <div class="upload-options">
+                <div class="upload-option">
+                  <h5>Upload from Computer</h5>
+                  <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                      >
+                        <path
+                          d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                        <polyline
+                          points="17 8 12 3 7 8"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <line
+                          x1="12"
+                          y1="3"
+                          x2="12"
+                          y2="15"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                      <p>Drag and drop or click to upload</p>
+                      <input
+                        type="file"
+                        id="fileInput"
+                        accept="image/*"
+                        hidden
+                      />
+                    </div>
+                  </div>
+                  <button id="uploadFileBtn" class="action-button">
+                    Choose File
+                  </button>
+                </div>
+
+                <div class="upload-option">
+                  <h5>Scan with Mobile Device</h5>
+                  <div class="qr-code" id="qrCode">
+                    <!-- QR Code will be generated here -->
+                    <div class="qr-placeholder">QR Code will appear here</div>
+                  </div>
+                  <p class="small-text">
+                    Scan this QR code with your mobile device to upload an image
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-container" id="assessmentPreviewSection">
+              <h4>Assessment Results</h4>
+              <textarea
+                id="assessmentResults"
+                placeholder="Assessment results will appear here after processing the uploaded image"
+                rows="10"
+              ></textarea>
+            </div>
+
+            <div class="workflow-buttons">
+              <button id="assessmentBackBtn" class="secondary-button">
+                Back
+              </button>
+              <button id="assessmentNextBtn" class="primary-button">
+                Save & Next
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Generate Report -->
+        <div class="workflow-step" id="step-4">
+          <div class="step-content">
+            <h3>Generate Final Report</h3>
+            <p>
+              Click the button below to download the final PLS-5 report using the information provided.
+            </p>
+            <button id="generateReportBtn" class="primary-button">
+              Generate Report
+            </button>
+            <!-- Report Sections Container (initially hidden) -->
+            <div id="reportSectionsContainer" class="report-sections-container" style="display: none;">
+              <h4>Edit Report Sections</h4>
+              <p class="instruction">You can edit any section below before exporting the final report.</p>
+              <!-- Report sections will be dynamically added here -->
+              <div id="reportSectionsContent"></div>
+              <button id="exportReportBtn" class="action-button">
+                Export Report as Word Document
+              </button>
+            </div>
+            <div class="workflow-buttons">
+              <button id="reportBackBtn" class="secondary-button">Back</button>
+              <button id="startOverBtn" class="neutral-button">
+                Start Over
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Content Preview Container -->
+    <div id="previewContainer" class="preview-container"></div>
+
+    <!-- Add Firebase Config -->
+    <script src="../config/firebase-config.js"></script>
+    <!-- Add mock data and services -->
+    <script src="../mock-data.js"></script>
+    <script src="../services/report-service.js"></script>
+    <script src="sidebar.js"></script>
+  </body>
+</html>

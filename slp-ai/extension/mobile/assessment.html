@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLS-5 Score Entry</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+    .container { max-width: 400px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 24px; }
+    h2 { text-align: center; margin-bottom: 24px; }
+    label { display: block; margin: 16px 0 4px; }
+    input[type="number"] { width: 100%; padding: 8px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 12px; background: #1976d2; color: #fff; border: none; border-radius: 4px; font-size: 1rem; margin-top: 24px; cursor: pointer; }
+    .success { color: green; text-align: center; margin-top: 16px; }
+    .error { color: red; text-align: center; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>PLS-5 Score Entry</h2>
+    <form id="pls5Form">
+      <label>Auditory Comprehension
+        <input name="auditoryComprehension" required min="50" max="150" type="number" />
+      </label>
+      <label>Expressive Communication
+        <input name="expressiveCommunication" required min="50" max="150" type="number" />
+      </label>
+      <label>Total Language
+        <input name="totalLanguage" required min="50" max="150" type="number" />
+      </label>
+      <label>Percentile Rank
+        <input name="percentileRank" required min="1" max="99" type="number" />
+      </label>
+      <button type="submit">Submit Scores</button>
+    </form>
+    <div id="message"></div>
+  </div>
+  <script src="firebase-app-compat.js"></script>
+  <script src="firebase-firestore-compat.js"></script>
+  <script src="assessment.js"></script>
+</body>
+</html> 

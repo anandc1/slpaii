@@ -1,0 +1,21 @@
+// PATIENTS COLLECTION - DEBUG VERSION
+match /patients/{patientId} {
+  // For debugging - allow any authenticated user to read patients collection
+  // IMPORTANT: Use this only for debugging and testing!
+  // Remove these rules before deploying to production
+  
+  // Allow all authenticated users to read
+  allow read: if request.auth != null;
+  
+  // Create/update rules stay the same
+  allow create: if (isProvider() || isAdmin()) && 
+                request.resource.data.keys().hasAll(['createdAt', 'providerUID']) &&
+                request.resource.data.createdAt is timestamp &&
+                request.resource.data.providerUID is list &&
+                request.auth.uid in request.resource.data.providerUID;
+  
+  allow update: if (isProvider() || isAdmin() || isCurrentUser(patientId)) &&
+                request.resource.data.updatedAt is timestamp;
+  
+  allow delete: if false;
+} 

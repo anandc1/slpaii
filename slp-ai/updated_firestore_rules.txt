@@ -1,0 +1,40 @@
+// PATIENTS COLLECTION
+match /patients/{patientId} {
+  // Only the patient, their providers, or admins can access a specific patient
+  function canAccessPatient() {
+    return isCurrentUser(patientId) || 
+           isAdmin() ||
+           (isProvider() && 
+            resource.data.providerUID is list && 
+            request.auth.uid in resource.data.providerUID);
+  }
+  
+  // Allow providers to search patients by name
+  function isNameSearch() {
+    return isProvider() && 
+          (request.query.limit <= 20) && // Limit search results for performance
+          (
+            (request.query.filters.size() == 2 && 
+             request.query.filters.hasOnly(['firstName', 'lastName'])) ||
+            (request.query.filters.size() == 3 && 
+             request.query.filters.hasOnly(['firstName', 'lastName', 'birthDate']))
+          );
+  }
+  
+  // Allow read for specific document if proper access rights or for name-based searches
+  allow read: if canAccessPatient() || isNameSearch();
+  
+  // Only providers and admins can create patient records
+  allow create: if (isProvider() || isAdmin()) && 
+                request.resource.data.keys().hasAll(['createdAt', 'providerUID']) &&
+                request.resource.data.createdAt is timestamp &&
+                request.resource.data.providerUID is list &&
+                request.auth.uid in request.resource.data.providerUID;
+  
+  // Allow updates with proper validation
+  allow update: if canAccessPatient() &&
+                request.resource.data.updatedAt is timestamp;
+  
+  // Disallow manual deletion - use soft deletion instead
+  allow delete: if false;
+} 
